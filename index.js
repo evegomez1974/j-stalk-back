@@ -1,0 +1,6 @@
+const express = require('express')
+const app = express()
+//const parkings = require('./parkings.json')
+//app.get('/parkings', (req,res) => {    res.status(200).json(parkings)})
+app.get('/test', (req,res) => {    res.send("test")})
+app.listen(8080, () => {  console.log('Serveur écoute')})
