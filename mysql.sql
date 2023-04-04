@@ -7,8 +7,9 @@
 
 CREATE TABLE `User`
 (
- `userID`      int NOT NULL ,
+ `userID`      int NOT NULL AUTO_INCREMENT ,
  `password`    varchar(15) NOT NULL ,
+ `email`       varchar(50) NOT NULL ,
  `name`        varchar(45) NOT NULL ,
  `firstName`   varchar(45) NOT NULL ,
  `phoneNumber` int NOT NULL ,
@@ -25,7 +26,7 @@ PRIMARY KEY (`userID`)
 
 CREATE TABLE `Teacher`
 (
- `teacherID` int NOT NULL ,
+ `teacherID` int NOT NULL AUTO_INCREMENT ,
  `userID`    int NOT NULL ,
 
 PRIMARY KEY (`teacherID`),
@@ -39,7 +40,7 @@ CONSTRAINT `FK_4` FOREIGN KEY `FK_2` (`userID`) REFERENCES `User` (`userID`)
 
 CREATE TABLE `student`
 (
- `studentID`   int NOT NULL ,
+ `studentID`   int NOT NULL AUTO_INCREMENT ,
  `userID`      int NOT NULL ,
  `contratType` varchar(45) NOT NULL ,
  `postType`    varchar(45) NOT NULL ,
@@ -58,7 +59,7 @@ CONSTRAINT `FK_3` FOREIGN KEY `FK_3` (`userID`) REFERENCES `User` (`userID`)
 
 CREATE TABLE `Adress`
 (
- `adressID`   int NOT NULL ,
+ `adressID`   int NOT NULL AUTO_INCREMENT ,
  `adress`     varchar(250) NOT NULL ,
  `city`       varchar(50) NOT NULL ,
  `postalCode` int NOT NULL ,
@@ -73,12 +74,14 @@ PRIMARY KEY (`adressID`)
 
 CREATE TABLE `News`
 (
- `newsID`       int NOT NULL ,
+ `newsID`       int NOT NULL AUTO_INCREMENT ,
  `titleNews`    varchar(50) NOT NULL ,
  `typePost`     varchar(100) NOT NULL ,
  `duration`     timestamp NOT NULL ,
  `contractType` varchar(100) NOT NULL ,
  `price`        int NOT NULL ,
+ `description`  varchar(10000) NOT NULL ,
+ `favorite`     boolean NOT NULL ,
 
 PRIMARY KEY (`newsID`)
 );
@@ -91,7 +94,7 @@ PRIMARY KEY (`newsID`)
 
 CREATE TABLE `compagny`
 (
- `compagnyID` int NOT NULL ,
+ `compagnyID` int NOT NULL AUTO_INCREMENT ,
  `adressID`   int NOT NULL ,
  `newsID`     int NOT NULL ,
  `userID`     int NOT NULL ,
@@ -111,7 +114,7 @@ CONSTRAINT `FK_6` FOREIGN KEY `FK_4` (`newsID`) REFERENCES `News` (`newsID`)
 
 CREATE TABLE `School`
 (
- `schoolID`   int NOT NULL ,
+ `schoolID`   int NOT NULL AUTO_INCREMENT ,
  `schoolName` varchar(100) NOT NULL ,
  `studentID`  int NOT NULL ,
  `teacherID`  int NOT NULL ,
@@ -135,7 +138,7 @@ CONSTRAINT `FK_9` FOREIGN KEY `FK_4` (`studentID`) REFERENCES `student` (`studen
 
 CREATE TABLE `Document`
 (
- `documentID` int NOT NULL ,
+ `documentID` int NOT NULL AUTO_INCREMENT ,
  `name`       varchar(45) NOT NULL ,
  `typeDoc`    varchar(45) NOT NULL ,
 
