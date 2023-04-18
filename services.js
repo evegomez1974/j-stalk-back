@@ -192,29 +192,17 @@ verifEmail: function (credentials) {
   },
 
 
-  putPasswordById: function (email, Password) {
+  putPasswordById: function (Password , email ) {
     // modifier les infos de l'user connecté, en donnant l'id en param
+
     return new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT userID FROM user WHERE user.email = " + email,
-        email,
-        (err, results) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          if (results !== "") {
-            UserId =results ;
-            console.log(UserId);
-            let arrayReturn = "";
-            // get info from user selected
-            this.hashPassword(Password)
+      this.hashPassword(Password)
             .then(Password => {
-              const sqlPutUser = "UPDATE user SET password = ? WHERE userID = " + UserId;
+              const sqlPutUser = "UPDATE user SET password = ? WHERE user.email = ?";
       
             connection.query(
               sqlPutUser,
-              [Password, UserId],
+              [Password, email],
               (errorQueryPutUser, resultQueryPutUser) => {
                 if (errorQueryPutUser) {
                   console.error("est une erreur : " + errorQueryPutUser);
@@ -222,19 +210,15 @@ verifEmail: function (credentials) {
                   return;
                 }
                 //arrayReturn.push(resultQueryGetUser);
-                arrayReturn = resultQueryPutUser
+                //arrayReturn = resultQueryPutUser
+                console.log(resultQueryPutUser)
                 resolve({ status: 200});
               });
       
             })
 
           }
-        }
-      );
-    });
-    
-  
-  },
+        )},
 
 
 

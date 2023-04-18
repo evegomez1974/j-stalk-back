@@ -81,7 +81,7 @@ app.get("/users/login", (req, res) => {
 app.post("/userEmail/:email", (req, res) => {
   res.set("Content-Type", "application/json");
   services.verifEmail(req.params.email).then(data => {
-    console.log(data);
+    //console.log(data);
     res.sendStatus(200);   
   })
   .catch(e => {
@@ -96,8 +96,12 @@ app.put("/userNewPassword/:password/:email", (req, res) => {
   res.set("Content-type", "application/json");
   console.log('param pass:', req.params.password)
   console.log('param email:', req.params.email)
-    services.putPasswordById(req.params.email , req.params.password).then(data => {
+    services.putPasswordById(req.params.password,req.params.email).then(data => {
       res.status(data.status).send(data.data);   
+    })
+    .catch(e => {
+      console.error(e);
+      res.sendStatus(500);
     })
 })
 
