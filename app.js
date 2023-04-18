@@ -68,6 +68,27 @@ app.get("/users/login", (req, res) => {
   })
 
 
+// Auth : non
+// Se connecter
+
+/**
+ * Verifie si email existe
+ */
+  // Auth : Non
+  // s'enregistrer
+
+
+app.post("/userEmail/:email", (req, res) => {
+  res.set("Content-Type", "application/json");
+  services.verifEmail(req.params.email).then(data => {
+    console.log(data);
+    res.sendStatus(200);   
+  })
+  .catch(e => {
+    console.error(e);
+    res.sendStatus(500);
+  })
+});
 
   // Auth : oui
 // modifier profil user

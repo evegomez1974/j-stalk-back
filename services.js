@@ -104,6 +104,33 @@ const connection = mysql.createConnection({
       });
     });
   },
+
+verifEmail: function (credentials) {
+  return new Promise((resolve, reject) => {
+
+    // Vérifier si l'adresse email existe déjà dans la base de données
+  connection.query("SELECT COUNT(*) AS email_count FROM `user` WHERE `email` = ?", [credentials], (err, rows) => {
+    if (err) {
+      reject(err);
+      return;
+    }
+    const email_count = rows[0].email_count;
+
+  // Si l'adresse email  existe , renvoyer resolve sinon une erreur
+  if (email_count > 0) {
+    resolve("Email existe")
+    return;
+  }else {
+    reject(new Error("L'email n'exsite pas"));
+    return;
+  }
+  
+});
+});
+},
+
+
+
   decodeCredentials: function (base64string) {
     console.log(base64string);
     let buffer = Buffer(base64string, "base64");
@@ -178,6 +205,7 @@ const connection = mysql.createConnection({
           }
           if (results !== "") {
             UserId =results ;
+            console.log(UserId);
             let arrayReturn = "";
             // get info from user selected
             this.hashPassword(Password)
