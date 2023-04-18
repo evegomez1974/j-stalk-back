@@ -21,12 +21,12 @@ const connection = mysql.createConnection({
      * @returns {Promise} jwt
      */
     login: function (credentials) {
-      let newCredentials = this.decodeCredentials(credentials);
-      console.log(newCredentials);
-      const userCredentials = [newCredentials.login, newCredentials.login, newCredentials.login];
+      let newCredentials = this.decodeCredentials(credentials);     
+      const userCredentials = [newCredentials.login];
+      console.log(newCredentials.password)
       return new Promise((resolve, reject) => {
         connection.query(
-          "SELECT COUNT(*) as nbComptes, userID FROM user WHERE user.email = ? OR user.phoneNumber = ?",
+          "SELECT COUNT(*) as nbComptes, userID FROM user WHERE user.email = ?",
           userCredentials,
           (err, results) => {
             if (err) {
@@ -35,6 +35,7 @@ const connection = mysql.createConnection({
             }
             console.log('nbComptes : '+ results[0].nbComptes)
             if (Number(results[0].nbComptes) === 1) {
+
               connection.query(
                 "SELECT password FROM user WHERE userID = ?",
                 [results[0].userID],
@@ -162,6 +163,51 @@ const connection = mysql.createConnection({
 
     });
   },
+
+
+  putPasswordById: function (email, Password) {
+    // modifier les infos de l'user connecté, en donnant l'id en param
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT userID FROM user WHERE user.email = " + email,
+        email,
+        (err, results) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          if (results !== "") {
+            UserId =results ;
+            let arrayReturn = "";
+            // get info from user selected
+            this.hashPassword(Password)
+            .then(Password => {
+              const sqlPutUser = "UPDATE user SET password = ? WHERE userID = " + UserId;
+      
+            connection.query(
+              sqlPutUser,
+              [Password, UserId],
+              (errorQueryPutUser, resultQueryPutUser) => {
+                if (errorQueryPutUser) {
+                  console.error("est une erreur : " + errorQueryPutUser);
+                  reject(errorQueryPutUser);
+                  return;
+                }
+                //arrayReturn.push(resultQueryGetUser);
+                arrayReturn = resultQueryPutUser
+                resolve({ status: 200});
+              });
+      
+            })
+
+          }
+        }
+      );
+    });
+    
+  
+  },
+
 
 
   /**

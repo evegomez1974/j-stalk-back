@@ -18,7 +18,8 @@ import cors from "cors";
 let upload = multer();
 const app = express();
 app.use(cors());
-const port = 3000;
+//const port = 8080;
+
 
 // Auth : non
 // Se connecter
@@ -29,6 +30,7 @@ const port = 3000;
 
 app.get("/users/login", (req, res) => {
     res.set("Content-Type", "application/json");
+    res.set("Access-Control-Allow-Origin", "*");
     let [status, message] = services.checkAuthZHeader(
       req.headers.authorization,
       "Basic"
@@ -38,13 +40,13 @@ app.get("/users/login", (req, res) => {
     }
   
     let credentials = req.headers.authorization.split(" ")[1];
-    console.log(credentials);
+    //console.log(credentials);
     services.login(credentials).then((token) => {
       if (!token) {
         res.status(400).send("Identifiant ou mot de passe incorrect");
         return;
       }
-      // else{const userId = services.login(req.body); }
+      //else{const userId = services.login(req.body); }
       res.json({ token });
     })
     .catch(e => {
@@ -64,3 +66,20 @@ app.get("/users/login", (req, res) => {
       res.status(400).send({ err });
     })
   })
+
+
+
+  // Auth : oui
+// modifier profil user
+app.put("/userNewPassword/:password/:email", (req, res) => {
+  res.set("Content-type", "application/json");
+  console.log('param pass:', req.params.password)
+  console.log('param email:', req.params.email)
+    services.putPasswordById(req.params.email , req.params.password).then(data => {
+      res.status(data.status).send(data.data);   
+    })
+})
+
+
+  app.listen(8080, () => {  console.log("Connecté à la base de données J-Stalk de MySQL!")})
+  
