@@ -50,6 +50,7 @@ app.get("/users/login", (req, res) => {
       res.json({ token });
     })
     .catch(e => {
+      console.log("ici")
       console.error(e);
       res.sendStatus(500);
     })

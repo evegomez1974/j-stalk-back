@@ -23,7 +23,6 @@ const connection = mysql.createConnection({
     login: function (credentials) {
       let newCredentials = this.decodeCredentials(credentials);     
       const userCredentials = [newCredentials.login];
-      console.log(newCredentials.password)
       return new Promise((resolve, reject) => {
         connection.query(
           "SELECT COUNT(*) as nbComptes, userID FROM user WHERE user.email = ?",
@@ -35,12 +34,12 @@ const connection = mysql.createConnection({
             }
             console.log('nbComptes : '+ results[0].nbComptes)
             if (Number(results[0].nbComptes) === 1) {
-
-              connection.query(
+              const req = connection.query(
                 "SELECT password FROM user WHERE userID = ?",
                 [results[0].userID],
                 (err1, results1) => {
-                  if (err) {
+                  console.log(bcrypt.compareSync(newCredentials.password, results1[0].password))
+                  if (err1) {
                     reject(err1);
                     return;
                   }
@@ -148,12 +147,12 @@ verifEmail: function (credentials) {
   },
 
   decodeJwt: (token) => {
-    return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return jwt.verify(token, "j-stak");
   },
 
   createJWT: function (id) {
     const expiresIn = 86400;
-    return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn });
+    return jwt.sign({ id }, "j-stak", { expiresIn });
   },
 
   /**
