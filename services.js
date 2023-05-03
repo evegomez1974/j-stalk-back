@@ -25,7 +25,7 @@ const connection = mysql.createConnection({
       const userCredentials = [newCredentials.login];
       return new Promise((resolve, reject) => {
         connection.query(
-          "SELECT COUNT(*) as nbComptes, userID FROM user WHERE user.email = ?",
+          "SELECT COUNT(*) as nbComptes, userID FROM users WHERE users.email = ?",
           userCredentials,
           (err, results) => {
             if (err) {
@@ -35,7 +35,7 @@ const connection = mysql.createConnection({
             console.log('nbComptes : '+ results[0].nbComptes)
             if (Number(results[0].nbComptes) === 1) {
               const req = connection.query(
-                "SELECT password FROM user WHERE userID = ?",
+                "SELECT password FROM users WHERE userID = ?",
                 [results[0].userID],
                 (err1, results1) => {
                   console.log(bcrypt.compareSync(newCredentials.password, results1[0].password))
@@ -69,7 +69,7 @@ const connection = mysql.createConnection({
     return new Promise((resolve, reject) => {
 
           // Vérifier si l'adresse email existe déjà dans la base de données
-      connection.query("SELECT COUNT(*) AS email_count FROM `user` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
+      connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
         if (err) {
           reject(err);
           return;
@@ -86,12 +86,12 @@ const connection = mysql.createConnection({
         .then(pwd => {
           const userCredentials = [credentials.name, credentials.firstname, credentials.email, credentials.phoneNumber, credentials.pictures, pwd];
   
-          connection.query("INSERT INTO `user`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
+          connection.query("INSERT INTO `users`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
             if(err) {
               reject(err);
               return;
             }
-            connection.query("SELECT MAX(userID) as id FROM user", (err, result) => {
+            connection.query("SELECT MAX(userID) as id FROM users", (err, result) => {
               if(err) {
                 reject(err);
                 return;
@@ -108,7 +108,7 @@ verifEmail: function (credentials) {
   return new Promise((resolve, reject) => {
 
     // Vérifier si l'adresse email existe déjà dans la base de données
-  connection.query("SELECT COUNT(*) AS email_count FROM `user` WHERE `email` = ?", [credentials], (err, rows) => {
+  connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials], (err, rows) => {
     if (err) {
       reject(err);
       return;
@@ -171,7 +171,7 @@ verifEmail: function (credentials) {
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetUser = "SELECT * FROM user WHERE userID = ?";
+      const sqlGetUser = "SELECT * FROM users WHERE userID = ?";
       connection.query(
         sqlGetUser,
         [UserId],
@@ -197,7 +197,7 @@ verifEmail: function (credentials) {
     return new Promise((resolve, reject) => {
       this.hashPassword(Password)
             .then(Password => {
-              const sqlPutUser = "UPDATE user SET password = ? WHERE user.email = ?";
+              const sqlPutUser = "UPDATE users SET password = ? WHERE users.email = ?";
       
             connection.query(
               sqlPutUser,
