@@ -9,21 +9,16 @@
 // });
 // module.exports = db
 
-import express from "express";
 import services from "./service.js";
-import multer from "multer";
-import mysql from "mysql2";
-import cors from "cors";
-import bodyParser from "body-parser";
 
-let upload = multer();
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+
+import express from "express";
+const router = express.Router();
+// app.use(bodyParser.json());
 
 //const port = 8080;
 
-app.get("/jobOffers", (req, res) => {
+router.get("/listJobOffers", (req, res) => {
   res.set("Content-type", "application/json");
 
   // Récupération de toutes les entreprises
@@ -40,24 +35,24 @@ app.get("/jobOffers", (req, res) => {
     });
 });
 
-app.put("/addJobOffers", (req, res) => {
+router.put("/addJobOffers", (req, res) => {
   res.set("Content-type", "application/json");
 
-  const body = req.body;
+  const jobOffer = req.body;
 
   /* Creating an object called account. */
-      var jobOffer = {
-        jobTitle: body.jobTitle,
-        jobType: body.jobType,
-        contractType: body.contractType,
-        contractLength: body.contractLength,
-        salary: body.salary,
-        tempSalary: body.tempSalary,
-        favorite: body.favorite,
-        department: body.department,
-        description: body.description,
-        city: body.city
-      }
+      // var jobOffer = {
+      //   jobTitle: body.jobTitle,
+      //   jobType: body.jobType,
+      //   contractType: body.contractType,
+      //   contractLength: body.contractLength,
+      //   salary: body.salary,
+      //   tempSalary: body.tempSalary,
+      //   favorite: body.favorite,
+      //   department: body.department,
+      //   description: body.description,
+      //   city: body.city
+      // }
 
   // Récupération de toutes les entreprises
   services.addJobOffer(jobOffer)
@@ -72,4 +67,5 @@ app.put("/addJobOffers", (req, res) => {
 
 
 
-app.listen(8080, () => { console.log("Connecté à la base de données J-Stalk de MySQL!") })
+
+export default router;
