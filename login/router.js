@@ -4,10 +4,9 @@ import multer from "multer";
 
 const router = express.Router();
 
-
 let upload = multer();
 
-app.get("/users/login", (req, res) => {
+router.get("/users/login", (req, res) => {
     res.set("Content-Type", "application/json");
     res.set("Access-Control-Allow-Origin", "*");
     let [status, message] = services.checkAuthZHeader(
@@ -37,7 +36,7 @@ app.get("/users/login", (req, res) => {
   
   // Auth : Non
   // s'enregistrer
-  app.post('/users/signup', upload.fields([]), (req,res) => {
+  router.post('/users/signup', upload.fields([]), (req,res) => {
     services.signup(req.body)
     .then(token => {
       res.status(200).send({ token });
@@ -58,7 +57,7 @@ app.get("/users/login", (req, res) => {
   // s'enregistrer
 
 
-app.post("/userEmail/:email", (req, res) => {
+  router.post("/userEmail/:email", (req, res) => {
   res.set("Content-Type", "application/json");
   services.verifEmail(req.params.email).then(data => {
     //console.log(data);
@@ -72,7 +71,7 @@ app.post("/userEmail/:email", (req, res) => {
 
   // Auth : oui
 // modifier profil user
-app.put("/userNewPassword/:password/:email", (req, res) => {
+router.put("/userNewPassword/:password/:email", (req, res) => {
   res.set("Content-type", "application/json");
   console.log('param pass:', req.params.password)
   console.log('param email:', req.params.email)
@@ -84,3 +83,5 @@ app.put("/userNewPassword/:password/:email", (req, res) => {
       res.sendStatus(500);
     })
 })
+
+export default router;

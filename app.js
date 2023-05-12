@@ -10,10 +10,8 @@
 // module.exports = db
 
 import express from "express";
-import services from "./services.js";
-import multer from "multer";
-import mysql from "mysql2";
 import cors from "cors";
+import login from "./login/router.js"
 import jobOffersRoutes from "./jobOffers/router.js";
 
 
@@ -21,8 +19,8 @@ const app = express();
 app.use(cors());
 //const port = 8080;
 
-
-app.use('/jobOffers', jobOffersRoutes)
+app.use(login)
+app.use(jobOffersRoutes)
 // Auth : non
 // Se connecter
 /**

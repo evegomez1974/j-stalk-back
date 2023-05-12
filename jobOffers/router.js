@@ -1,20 +1,10 @@
-// const express = require('express')
-// const app = express()
-// const mysql = require('mysql')
-// app.listen(8080, () => {  console.log('Serveur écoute')})
-// const db = mysql.createConnection({databse:"j-stalk", host: "localhost",   user: "root",   password: "" });
-// db.connect(function(err) {   
-//     if (err) throw err;   
-//     console.log("Connecté à la base de données MySQL!"); 
-// });
-// module.exports = db
+import express from "express";
+import bodyParser from "body-parser";
 
 import services from "./service.js";
 
-
-import express from "express";
 const router = express.Router();
-// app.use(bodyParser.json());
+router.use(bodyParser.json());
 
 //const port = 8080;
 
@@ -24,7 +14,7 @@ router.get("/listJobOffers", (req, res) => {
   // Récupération de toutes les entreprises
   services.getJobOffers()
     .then(jobOffers => {
-      // Envoi de la réponse JSON avec les entreprises et le statut 200 OK
+      // Envoi de la réponse JSON avec les jobOffer et le statut 200 OK
       // console.log(jobOffers)
       res.status(200).json({ jobOffers });
     })
@@ -38,25 +28,25 @@ router.get("/listJobOffers", (req, res) => {
 router.put("/addJobOffers", (req, res) => {
   res.set("Content-type", "application/json");
 
-  const jobOffer = req.body;
+  const body = req.body;
 
-  /* Creating an object called account. */
-      // var jobOffer = {
-      //   jobTitle: body.jobTitle,
-      //   jobType: body.jobType,
-      //   contractType: body.contractType,
-      //   contractLength: body.contractLength,
-      //   salary: body.salary,
-      //   tempSalary: body.tempSalary,
-      //   favorite: body.favorite,
-      //   department: body.department,
-      //   description: body.description,
-      //   city: body.city
-      // }
+  /* Creating an object called jobOffer. */
+      var jobOffer = {
+        jobTitle: body.jobTitle,
+        jobType: body.jobType,
+        contractType: body.contractType,
+        contractLength: body.contractLength,
+        salary: body.salary,
+        tempSalary: body.tempSalary,
+        favorite: body.favorite,
+        department: body.department,
+        description: body.description,
+        city: body.city
+      }
 
-  // Récupération de toutes les entreprises
   services.addJobOffer(jobOffer)
     .then(result => {
+      console.log("Ajoutée à la bdd avec succès")
       res.status(result.status).json({ message: `L'annonce a été ajoutée avec succès avec l'ID ${result.data}` });
     })
     .catch(error => {
@@ -64,8 +54,5 @@ router.put("/addJobOffers", (req, res) => {
       res.status(500).json({ error: error });
     });
 });
-
-
-
 
 export default router;
