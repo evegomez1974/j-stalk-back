@@ -32,6 +32,8 @@ router.put("/addJobOffers", (req, res) => {
 
   /* Creating an object called jobOffer. */
       var jobOffer = {
+        company: body.company,
+        email: body.email,
         jobTitle: body.jobTitle,
         jobType: body.jobType,
         contractType: body.contractType,
