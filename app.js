@@ -29,32 +29,30 @@ app.use(cors());
  */
 
 app.get("/users/login", (req, res) => {
-    res.set("Content-Type", "application/json");
-    res.set("Access-Control-Allow-Origin", "*");
-    let [status, message] = services.checkAuthZHeader(
-      req.headers.authorization,
-      "Basic"
-    );
-    if (status != 200) {
-      res.status(status).send(message);
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(
+    req.headers.authorization,
+    "Basic"
+  );
+  if (status != 200) {
+    res.status(status).send(message);
+  }
+
+  let credentials = req.headers.authorization.split(" ")[1];
+  console.log(credentials);
+  services.login(credentials).then((token) => {
+    if (!token || token === "Incorrect") {
+      res.status(400).send("Identifiant ou mot de passe incorrect");
+      return;
     }
-  
-    let credentials = req.headers.authorization.split(" ")[1];
-    //console.log(credentials);
-    services.login(credentials).then((token) => {
-      if (!token) {
-        res.status(400).send("Identifiant ou mot de passe incorrect");
-        return;
-      }
-      //else{const userId = services.login(req.body); }
-      res.json({ token });
-    })
-    .catch(e => {
-      console.log("ici")
-      console.error(e);
-      res.sendStatus(500);
-    })
-  });
+    // else{const userId = services.login(req.body); }
+    res.json({ token });
+  })
+  .catch(e => {
+    console.error(e);
+    res.sendStatus(400);
+  })
+});
   
   // Auth : Non
   // s'enregistrer
@@ -80,9 +78,10 @@ app.get("/users/login", (req, res) => {
 
 
 app.post("/userEmail/:email", (req, res) => {
+  console.log("email : " + req.params.email)
   res.set("Content-Type", "application/json");
   services.verifEmail(req.params.email).then(data => {
-    //console.log(data);
+    console.log(data);
     res.sendStatus(200);   
   })
   .catch(e => {
