@@ -46,9 +46,32 @@ const services = {
     });
   },
 
+  getAdress: function () {
+    // return les infos de l'user connecté, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+      let arrayReturn = "";
+      // get info from user selected
+      const sqlGetAdress = "SELECT companies.*, adresses.adress, adresses.city, departments.code, departments.name as departmentName, users.phoneNumber, users.email, users.name as userName FROM companies JOIN adresses ON companies.adressID = adresses.adressID JOIN departments ON adresses.departmentID = departments.id JOIN users ON companies.userID = users.userID;";
+      connection.query(
+        sqlGetAdress,
+        (errorQueryGetAdress, resultQueryGetAdress) => {
+          if (errorQueryGetAdress) {
+            console.error(errorQueryGetAdress);
+            reject(errorQueryGetAdress);
+            return;
+          }
+          console.log(resultQueryGetAdress);
+          //arrayReturn.push(resultQueryGetUser);
+          arrayReturn = resultQueryGetAdress
+          resolve({ status: 200, data: arrayReturn});
+        });
+
+    });
+  },
+
 
 
 };
 
 export default services;
-
