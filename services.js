@@ -25,7 +25,7 @@ const connection = mysql.createConnection({
       const userCredentials = [newCredentials.login];
       return new Promise((resolve, reject) => {
         connection.query(
-          "SELECT COUNT(*) as nbComptes, userID FROM user WHERE user.email = ?",
+          "SELECT COUNT(*) as nbComptes, userID FROM users WHERE users.email = ?",
           userCredentials,
           (err, results) => {
             if (err) {
@@ -35,7 +35,7 @@ const connection = mysql.createConnection({
             console.log('nbComptes : '+ results[0].nbComptes)
             if (Number(results[0].nbComptes) === 1) {
               const req = connection.query(
-                "SELECT password FROM user WHERE userID = ?",
+                "SELECT password FROM users WHERE userID = ?",
                 [results[0].userID],
                 (err1, results1) => {
                   console.log(bcrypt.compareSync(newCredentials.password, results1[0].password))
@@ -69,7 +69,7 @@ const connection = mysql.createConnection({
     return new Promise((resolve, reject) => {
 
           // Vérifier si l'adresse email existe déjà dans la base de données
-      connection.query("SELECT COUNT(*) AS email_count FROM `user` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
+      connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
         if (err) {
           reject(err);
           return;
@@ -86,12 +86,12 @@ const connection = mysql.createConnection({
         .then(pwd => {
           const userCredentials = [credentials.name, credentials.firstname, credentials.email, credentials.phoneNumber, credentials.pictures, pwd];
   
-          connection.query("INSERT INTO `user`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
+          connection.query("INSERT INTO `users`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
             if(err) {
               reject(err);
               return;
             }
-            connection.query("SELECT MAX(userID) as id FROM user", (err, result) => {
+            connection.query("SELECT MAX(userID) as id FROM users", (err, result) => {
               if(err) {
                 reject(err);
                 return;
@@ -108,7 +108,7 @@ verifEmail: function (credentials) {
   return new Promise((resolve, reject) => {
 
     // Vérifier si l'adresse email existe déjà dans la base de données
-  connection.query("SELECT COUNT(*) AS email_count FROM `user` WHERE `email` = ?", [credentials], (err, rows) => {
+  connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials], (err, rows) => {
     if (err) {
       reject(err);
       return;
@@ -126,6 +126,29 @@ verifEmail: function (credentials) {
   
 });
 });
+},
+
+
+addUserDocs: function (userId, docDetails) { //garageDetails, userId
+  //post garage en base de donnée
+  // voir comment est géré l'IdUtilisateur avec le token
+
+  return new Promise((resolve,reject) => {
+
+    const sqlInsertDocs = 
+      "INSERT INTO `documents` (`userID`, `name`, `docPDF`) VALUES (?,?,?)";
+    connection.query(sqlInsertDocs, [userId,docDetails.name,docDetails.docPDF], (error2, results) => {
+      if (error2) {
+        reject(error2)
+        console.error(error2);
+        return;
+      }
+      console.log(results)
+        resolve({status : 200});
+
+
+  });
+})
 },
 
 
@@ -165,13 +188,38 @@ verifEmail: function (credentials) {
   },
 
 
+  getPDFById: function (documentId) {
+    // return un garage avec ses photos et ses mobilites, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+      // get info from garages selected
+      const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = ?";
+      connection.query(
+        sqlGetPDF,
+        documentId,
+        (errorQueryGetPDF, resultQueryGetPDF) => {
+          if (errorQueryGetPDF) {
+            console.error(errorQueryGetPDF);
+            reject(errorQueryGetPDF);
+            return;
+          }
+          resolve(resultQueryGetPDF);
+   
+        }
+      );
+    });
+  },
+
+
+
+
   getUserById: function (UserId) {
     // return les infos de l'user connecté, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetUser = "SELECT * FROM user WHERE userID = ?";
+      const sqlGetUser = "SELECT * FROM users WHERE userID = ?";
       connection.query(
         sqlGetUser,
         [UserId],
@@ -191,13 +239,93 @@ verifEmail: function (credentials) {
   },
 
 
+  getUserByIdInfos: function (UserId) {
+    // return les infos de l'user connecté, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+      let arrayReturn = "";
+      // get info from user selected
+      const sqlGetUser = "SELECT * FROM users INNER JOIN students ON users.userID = students.userId WHERE users.userID = ?";
+      connection.query(
+        sqlGetUser,
+        [UserId],
+        (errorQueryGetUser, resultQueryGetUser) => {
+          if (errorQueryGetUser) {
+            console.error(errorQueryGetUser);
+            reject(errorQueryGetUser);
+            return;
+          }
+          //console.log(resultQueryGetUser);
+          //arrayReturn.push(resultQueryGetUser);
+          arrayReturn = resultQueryGetUser
+          console.log(arrayReturn);
+          resolve({ status: 200, data: arrayReturn});
+        });
+
+    });
+},
+
+
+
+getUserByIdDocs: function (UserId) {
+  // return les infos de l'user connecté, en donnant l'id en param
+  //tableaudeReturn
+  return new Promise((resolve, reject) => {
+    let arrayReturn = "";
+    // get info from user selected
+    const sqlGetUser = "SELECT * FROM documents WHERE userID = ?";
+    connection.query(
+      sqlGetUser,
+      [UserId],
+      (errorQueryGetUser, resultQueryGetUser) => {
+        if (errorQueryGetUser) {
+          console.error(errorQueryGetUser);
+          reject(errorQueryGetUser);
+          return;
+        }
+        //console.log(resultQueryGetUser);
+        //arrayReturn.push(resultQueryGetUser);
+        arrayReturn = resultQueryGetUser
+        console.log(arrayReturn);
+        resolve({ status: 200, data: arrayReturn});
+      });
+
+  });
+},
+
+getStudentById: function (UserId) {
+  // return les infos de l'user connecté, en donnant l'id en param
+  //tableaudeReturn
+  return new Promise((resolve, reject) => {
+    let arrayReturn = "";
+    // get info from user selected
+    const sqlGetStudent = "SELECT * FROM students WHERE userID = ?";
+    connection.query(
+      sqlGetStudent,
+      [UserId],
+      (errorQueryGetStudent, resultQueryGetStudent) => {
+        if (errorQueryGetStudent) {
+          console.error(errorQueryGetStudent);
+          reject(errorQueryGetStudent);
+          return;
+        }
+    
+        arrayReturn = resultQueryGetStudent
+        console.log(arrayReturn);
+        resolve({ status: 200, data: arrayReturn});
+      });
+
+  });
+},
+
+
   putPasswordById: function (Password , email ) {
     // modifier les infos de l'user connecté, en donnant l'id en param
 
     return new Promise((resolve, reject) => {
       this.hashPassword(Password)
             .then(Password => {
-              const sqlPutUser = "UPDATE user SET password = ? WHERE user.email = ?";
+              const sqlPutUser = "UPDATE users SET password = ? WHERE users.email = ?";
       
             connection.query(
               sqlPutUser,
@@ -219,6 +347,66 @@ verifEmail: function (credentials) {
           }
         )},
 
+
+
+        putPicturesUserById: function (UserId, Picture) {
+          // modifier les infos de l'user connecté, en donnant l'id en param
+          //tableaudeReturn
+          return new Promise((resolve, reject) => {
+            let arrayReturn = "";
+            // get info from user selected
+            console.log("id " + UserId);
+            console.log("pictures " + Picture);
+            const sqlPutUser = "UPDATE users SET pictures = ? WHERE userID = " + UserId;
+            console.log(sqlPutUser);
+            connection.query(
+              sqlPutUser,
+              [Picture, UserId],
+              (errorQueryPutUser, resultQueryPutUser) => {
+                if (errorQueryPutUser) {
+                  console.error("est une erreur : " + errorQueryPutUser);
+                  reject(errorQueryPutUser);
+                  return;
+                }
+                //arrayReturn.push(resultQueryGetUser);
+                arrayReturn = resultQueryPutUser
+                resolve({ status: 200});
+  
+              });
+      
+          });
+        },
+
+        
+
+        putDocsUserById: function ( docPDF, documentID, UserId) {
+          // modifier les infos de l'user connecté, en donnant l'id en param
+          //tableaudeReturn
+          return new Promise((resolve, reject) => {
+            let arrayReturn = "";
+            // get info from user selected
+            console.log("id " + UserId);
+            console.log("doc " + docPDF);
+            console.log("iddoc " + documentID);
+            const sqlPutUserDocs = "UPDATE documents SET docPDF = ? WHERE documentID= ? AND userID = " + UserId;
+            console.log(sqlPutUserDocs);
+            connection.query(
+              sqlPutUserDocs,
+              [docPDF, documentID, UserId],
+              (errorQueryPutUserDocs, resultQueryPutUserDocs) => {
+                if (errorQueryPutUserDocs) {
+                  console.error("est une erreur : " + errorQueryPutUserDocs);
+                  reject(errorQueryPutUserDocs);
+                  return;
+                }
+                //arrayReturn.push(resultQueryGetUser);
+                arrayReturn = resultQueryPutUserDocs
+                resolve({ status: 200});
+  
+              });
+      
+          });
+        },
 
 
   /**

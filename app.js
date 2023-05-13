@@ -107,5 +107,216 @@ app.put("/userNewPassword/:password/:email", (req, res) => {
 })
 
 
+
+app.post("/userDocs", upload.fields([]), (req,res) => {
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+if (status != 200) {
+  res.status(status).send(message);
+}
+
+const token = req.headers.authorization.split(" ")[1];
+console.log(token);
+let decoded;
+try {
+  decoded = services.decodeJwt(token);
+  console.log(decoded);
+  console.log(decoded.id);
+} catch (e) {
+  console.log(e);
+}
+if (decoded) {
+  res.set("Content-Type", "application/json");
+   services.addUserDocs(decoded.id, req.body).then((data) => {
+     res.status(data.status).send(data.status);
+   });
+   } else {
+     res.status(401).end("Vous n'êtes pas authentifié");
+     return;
+   }
+})
+
+
+// Auth : oui
+// modifier profil user
+app.put("/userPictures/:Pictures", (req, res) => {
+  res.set("Content-type", "application/json");
+  console.log('param:', req.params.Pictures)
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.putPicturesUserById(decoded.id , req.params.Pictures).then(data => {
+      console.log(data);
+      res.status(data.status).send(data.status);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
+
+// Auth : oui
+// modifier profil user
+app.put("/userDocsModif/:docPDF/:documentID", (req, res) => {
+  res.set("Content-type", "application/json");
+  console.log('param:', req.params.docPDF, req.params.documentID)
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.putDocsUserById(req.params.docPDF, req.params.documentID, decoded.id).then(data => {
+      console.log(data);
+      res.status(data.status).send(data.status);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
+
+// Auth : oui
+// voir profil user
+app.get("/userInfos", (req, res) => {
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.getUserByIdInfos(decoded.id).then(data => {
+      res.status(data.status).send(data.data);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
+
+
+
+// Auth : oui
+// voir profil user
+app.get("/userDocs", (req, res) => {
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.getUserByIdDocs(decoded.id).then(data => {
+      res.status(data.status).send(data.data);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
+
+// Auth : Oui
+// Louer une place
+app.get("/userPDF/:documentID"),
+  (req, res) => {
+    res.set("Content-Type", "application/json");
+    let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+    if (status != 200) {
+      res.status(status).send(message);
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+    let decoded;
+    try {
+      decoded = services.decodeJwt(token);
+      console.log(decoded);
+    } catch (e) {
+      console.log(e);
+    }
+    if (decoded) {
+      services.getPDFById(req.params.id).then(data => {
+        res.sendStatus(data.status);   
+      })
+    } else {
+      res.status(401).end("Vous n'êtes pas authentifié");
+      return;
+    }
+  },
+
+// Auth : oui
+// voir profil student
+app.get("/studentInfos", (req, res) => {
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.getStudentById(decoded.id).then(data => {
+      res.status(data.status).send(data.data);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
   app.listen(8080, () => {  console.log("Connecté à la base de données J-Stalk de MySQL!")})
   
