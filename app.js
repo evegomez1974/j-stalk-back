@@ -13,7 +13,7 @@ import express from "express";
 import cors from "cors";
 import login from "./login/router.js"
 import jobOffersRoutes from "./jobOffers/router.js";
-
+import students from "./students/router.js"
 
 const app = express();
 app.use(cors());
@@ -21,6 +21,7 @@ app.use(cors());
 
 app.use(login)
 app.use(jobOffersRoutes)
+app.use(students)
 // Auth : non
 // Se connecter
 /**
