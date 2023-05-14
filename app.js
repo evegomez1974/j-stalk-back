@@ -137,9 +137,9 @@ if (decoded) {
 
 // Auth : oui
 // modifier profil user
-app.put("/userPictures/:Pictures", (req, res) => {
+app.post("/userPictures", upload.fields([]), (req, res) => {
   res.set("Content-type", "application/json");
-  console.log('param:', req.params.Pictures)
+  console.log('param:', req.body.pictures)
   let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
   if (status != 200) {
     res.status(status).send(message);
@@ -155,9 +155,9 @@ app.put("/userPictures/:Pictures", (req, res) => {
     console.log(e);
   }
   if (decoded) {
-    services.putPicturesUserById(decoded.id , req.params.Pictures).then(data => {
+    services.putPicturesUserById(req.body.pictures, decoded.id).then(data => {
       console.log(data);
-      res.status(data.status).send(data.status);   
+      res.status(data.status).send(data.data);   
     })
   } else {
     res.status(401).end("Vous n'êtes pas authentifié");
@@ -168,7 +168,7 @@ app.put("/userPictures/:Pictures", (req, res) => {
 
 // Auth : oui
 // modifier profil user
-app.put("/userDocsModif/:docPDF/:documentID", (req, res) => {
+app.post("/userDocsModif/:docPDF/:documentID", (req, res) => {
   res.set("Content-type", "application/json");
   console.log('param:', req.params.docPDF, req.params.documentID)
   let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
@@ -279,6 +279,7 @@ app.get("/userPDF/:documentID"),
       console.log(e);
     }
     if (decoded) {
+      console.log("id doc : " + req.params.id)
       services.getPDFById(req.params.id).then(data => {
         res.sendStatus(data.status);   
       })

@@ -349,14 +349,14 @@ getStudentById: function (UserId) {
 
 
 
-        putPicturesUserById: function (UserId, Picture) {
+        putPicturesUserById: function (Picture, UserId) {
           // modifier les infos de l'user connecté, en donnant l'id en param
           //tableaudeReturn
           return new Promise((resolve, reject) => {
             let arrayReturn = "";
             // get info from user selected
             console.log("id " + UserId);
-            console.log("pictures " + Picture);
+            //console.log("pictures " + Picture);
             const sqlPutUser = "UPDATE users SET pictures = ? WHERE userID = " + UserId;
             console.log(sqlPutUser);
             connection.query(
@@ -370,7 +370,7 @@ getStudentById: function (UserId) {
                 }
                 //arrayReturn.push(resultQueryGetUser);
                 arrayReturn = resultQueryPutUser
-                resolve({ status: 200});
+                resolve({ status: 200, data: arrayReturn});
   
               });
       
