@@ -21,30 +21,32 @@ const services = {
    * @returns {Promise} jwt
    */
 
-  
-  getlistDepartments: function () {
+
+  getListCompanies: function () {
     // return les infos de l'user connecté, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetDepartments = "SELECT name FROM departments;";
+      const sqlGetListCompanies = "SELECT companies.*, addresses.address, addresses.city, departments.code, departments.name as departmentName, users.phoneNumber, users.email, users.name as userName FROM companies JOIN addresses ON companies.addressID = addresses.addressID JOIN departments ON addresses.departmentID = departments.id JOIN users ON companies.userID = users.userID;";
       connection.query(
-        sqlGetDepartments,
-        (errorQueryGetListDepartments, resultQueryGetListDepartments) => {
-          if (errorQueryGetListDepartments) {
-            console.error(errorQueryGetListDepartments);
-            reject(errorQueryGetListDepartments);
+        sqlGetListCompanies,
+        (errorQueryGetListCompanies, resultQueryGetListCompanies) => {
+          if (errorQueryGetListCompanies) {
+            console.error(errorQueryGetListCompanies);
+            reject(errorQueryGetListCompanies);
             return;
           }
-          console.log(resultQueryGetListDepartments);
+          console.log(resultQueryGetListCompanies);
           //arrayReturn.push(resultQueryGetUser);
-          arrayReturn = resultQueryGetListDepartments
+          arrayReturn = resultQueryGetListCompanies
           resolve({ status: 200, data: arrayReturn});
         });
 
     });
   },
+
+
 
 };
 

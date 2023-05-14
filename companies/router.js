@@ -6,15 +6,15 @@ import services from "./service.js";
 const router = express.Router();
 router.use(bodyParser.json());
 
-router.get("/listDepartments", (req, res) => {
+router.get("/listCompanies", (req, res) => {
   res.set("Content-type", "application/json");
 
   // Récupération de toutes les entreprises
-  services.getlistDepartments()
-    .then(departments => {
+  services.getListCompanies()
+    .then(companies => {
       // Envoi de la réponse JSON avec les cities et le statut 200 OK
       // console.log(jobOffers)
-      res.status(200).json({ departments });
+      res.status(200).json({ companies });
     })
     .catch(error => {
       console.error(error);
