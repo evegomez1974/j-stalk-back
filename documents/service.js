@@ -44,33 +44,51 @@ const services = {
   },
 
 
-  putDocsUserById: function ( docPDF, documentID, UserId) {
+  putDocsUserById: function ( docDetails, UserId) {
     // modifier les infos de l'user connecté, en donnant l'id en param
     //tableaudeReturn
-    return new Promise((resolve, reject) => {
-      let arrayReturn = "";
-      // get info from user selected
-      console.log("id " + UserId);
-      console.log("doc " + docPDF);
-      console.log("iddoc " + documentID);
-      const sqlPutUserDocs = "UPDATE documents SET docPDF = ? WHERE documentID= ? AND userID = " + UserId;
-      console.log(sqlPutUserDocs);
-      connection.query(
-        sqlPutUserDocs,
-        [docPDF, documentID, UserId],
-        (errorQueryPutUserDocs, resultQueryPutUserDocs) => {
-          if (errorQueryPutUserDocs) {
-            console.error("est une erreur : " + errorQueryPutUserDocs);
-            reject(errorQueryPutUserDocs);
+    return new Promise((resolve,reject) => {
+  
+        const sqlInsertDocs =
+        "UPDATE documents SET (`name`, `docPDF`) VALUES (?,?) WHERE documentID= ? AND userID = " + UserId
+        connection.query(sqlInsertDocs, [docDetails.name,docDetails.docPDF,docDetails.documentID,userId], (error2, results) => {
+          if (error2) {
+            reject(error2)
+            console.error(error2);
             return;
           }
-          //arrayReturn.push(resultQueryGetUser);
-          arrayReturn = resultQueryPutUserDocs
-          resolve({ status: 200});
+          console.log(results)
+            resolve({status : 200});
+    
+    
+      });
+    })
 
-        });
+    // return new Promise((resolve, reject) => {
+    //   let arrayReturn = "";
+    //   // get info from user selected
+    //   console.log("id " + UserId);
+    //   console.log("doc " + docPDF);
+    //   console.log("iddoc " + documentID);
+    //   console.log("name " + name);
+    //   const sqlPutUserDocs = "UPDATE documents SET name = ? AND docPDF = ? WHERE documentID= ? AND userID = " + UserId;
+    //   console.log(sqlPutUserDocs);
+    //   connection.query(
+    //     sqlPutUserDocs,
+    //     [docPDF, documentID, UserId],
+    //     (errorQueryPutUserDocs, resultQueryPutUserDocs) => {
+    //       if (errorQueryPutUserDocs) {
+    //         console.error("est une erreur : " + errorQueryPutUserDocs);
+    //         reject(errorQueryPutUserDocs);
+    //         return;
+    //       }
+    //       //arrayReturn.push(resultQueryGetUser);
+    //       arrayReturn = resultQueryPutUserDocs
+    //       resolve({ status: 200});
 
-    });
+    //     });
+
+    // });
   },
  
 
@@ -117,7 +135,7 @@ const services = {
             reject(errorQueryGetPDF);
             return;
           }
-          resolve(resultQueryGetPDF);
+          resolve({ status: 200, data: resultQueryGetPDF});
 
         }
       );

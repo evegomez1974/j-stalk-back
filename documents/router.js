@@ -41,9 +41,9 @@ router.post("/userDocs", upload.fields([]), (req,res) => {
 
   // Auth : oui
 // modifier profil user
-router.post("/userDocsModif/:docPDF/:documentID", (req, res) => {
+router.put("/userDocsModif", upload.fields([]), (req, res) => {
     res.set("Content-type", "application/json");
-    console.log('param:', req.params.docPDF, req.params.documentID)
+    console.log('param:',req.params.documentID, req.params.name, req.params.docPDF)
     let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
     if (status != 200) {
       res.status(status).send(message);
@@ -59,7 +59,7 @@ router.post("/userDocsModif/:docPDF/:documentID", (req, res) => {
       console.log(e);
     }
     if (decoded) {
-      services.putDocsUserById(req.params.docPDF, req.params.documentID, decoded.id).then(data => {
+      services.putDocsUserById(req.body, decoded.id).then(data => {
         console.log(data);
         res.status(data.status).send(data.status);   
       })
@@ -104,34 +104,33 @@ router.get("/userDocs", (req, res) => {
 
   // Auth : Oui
 // Louer une place
-router.get("/userPDF/:documentID"),
-(req, res) => {
-  res.set("Content-Type", "application/json");
-  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
-
-  if (status != 200) {
-    res.status(status).send(message);
-  }
-
-  const token = req.headers.authorization.split(" ")[1];
-  let decoded;
-  try {
-    decoded = services.decodeJwt(token);
-    console.log(decoded);
-  } catch (e) {
-    console.log(e);
-  }
-  if (decoded) {
-    console.log("id doc : " + req.params.id)
-    services.getPDFById(req.params.id).then(data => {
-      res.sendStatus(data.status);   
-    })
-  } else {
-    res.status(401).end("Vous n'êtes pas authentifié");
-    return;
-  }
-};
-
+router.get("/userPDF/:documentID"),(req, res) => {
+    res.set("Content-Type", "application/json");
+    let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+  
+    if (status != 200) {
+      res.status(status).send(message);
+      return;
+    }
+  
+    const token = req.headers.authorization.split(" ")[1];
+    let decoded;
+    try {
+      decoded = services.decodeJwt(token);
+      console.log(decoded);
+    } catch (e) {
+      console.log(e);
+    }
+    if (decoded) {
+        console.log("id doc : " + req.params.documentID)
+      services.getPDFById(req.params.documentID).then(data => {
+        res.status(data.status).send(data.data);   
+      })
+    } else {
+      res.status(401).end("Vous n'êtes pas authentifié");
+      return;
+    }
+}
 
 
 export default router;
