@@ -59,9 +59,60 @@ const services = {
             }
         });
     });
-}
+},
+
+decodeCredentials: function (base64string) {
+  console.log(base64string);
+  let buffer = Buffer(base64string, "base64");
+  let decoded = buffer.toString();
+
+  // console.log('"' + base64string + '" converted from Base64 to ASCII is "' + decoded + '"');
+
+  let [email, password] = decoded.split(":");
+  // console.log([username, password]);
+
+  return {
+    login: email,
+    password: password,
+  };
+},
+
+decodeJwt: (token) => {
+  return jwt.verify(token, "j-stak");
+},
+
+createJWT: function (id) {
+  const expiresIn = 86400;
+  return jwt.sign({ id }, "j-stak", { expiresIn });
+},
+
+/**
+ *
+ * @param {String} password
+ * @returns {String} hashed password
+ */
+hashPassword: async function (password) {
+  return await bcrypt.hash(password, 10);
+},
 
 
+
+/**
+ *
+ * @param {String} header
+ * @param {String} auhtZType Basic | Bearer
+ * @returns {Array[int,String]} [status, message]
+ */
+checkAuthZHeader: function (header, auhtZType) {
+  if (header == null || typeof header !== "string") {
+    return [400, "En-tête AuthZ manquante"];
+  }
+  let authType = header.split(" ")[0];
+  if (authType != auhtZType) {
+    return [400, `Utilisez l'AuthZ '${auhtZType}'`];
+  }
+  return [200, "En-Têtes Valides"];
+},
 
 };
 

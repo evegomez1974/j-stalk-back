@@ -1,3 +1,6 @@
+
+
+
 import mysql from "mysql2";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -22,57 +25,34 @@ const services = {
    */
 
   
-  getListStudents: function () {
-    // return les infos de l'user connecté, en donnant l'id en param
+  putPicturesUserById: function (Picture, UserId) {
+    // modifier les infos de l'user connecté, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetListStudents = "SELECT s.*, u.name, u.firstName FROM students as s JOIN users as u ON s.userID = u.userID;";
+      console.log("id " + UserId);
+      //console.log("pictures " + Picture);
+      const sqlPutUser = "UPDATE users SET pictures = ? WHERE userID = " + UserId;
+      console.log(sqlPutUser);
       connection.query(
-        sqlGetListStudents,
-        (errorQueryGetListStudents, resultQueryGetListStudents) => {
-          if (errorQueryGetListStudents) {
-            console.error(errorQueryGetListStudents);
-            reject(errorQueryGetListStudents);
+        sqlPutUser,
+        [Picture, UserId],
+        (errorQueryPutUser, resultQueryPutUser) => {
+          if (errorQueryPutUser) {
+            console.error("est une erreur : " + errorQueryPutUser);
+            reject(errorQueryPutUser);
             return;
           }
-          console.log(resultQueryGetListStudents);
           //arrayReturn.push(resultQueryGetUser);
-          arrayReturn = resultQueryGetListStudents
+          arrayReturn = resultQueryPutUser
           resolve({ status: 200, data: arrayReturn});
+
         });
 
     });
   },
 
-
-  getStudentById: function (UserId) {
-    // return les infos de l'user connecté, en donnant l'id en param
-    //tableaudeReturn
-    return new Promise((resolve, reject) => {
-      let arrayReturn = "";
-      // get info from user selected
-      const sqlGetStudent = "SELECT * FROM students WHERE userID = ?";
-      connection.query(
-        sqlGetStudent,
-        [UserId],
-        (errorQueryGetStudent, resultQueryGetStudent) => {
-          if (errorQueryGetStudent) {
-            console.error(errorQueryGetStudent);
-            reject(errorQueryGetStudent);
-            return;
-          }
-  
-          arrayReturn = resultQueryGetStudent
-          console.log(arrayReturn);
-          resolve({ status: 200, data: arrayReturn});
-        });
-  
-    });
-  },
-
-  
   decodeCredentials: function (base64string) {
     console.log(base64string);
     let buffer = Buffer(base64string, "base64");

@@ -25,36 +25,33 @@ router.get("/listStudents", (req, res) => {
     });
 });
 
-// router.put("/addJobOffers", (req, res) => {
-//   res.set("Content-type", "application/json");
+// Auth : oui
+// voir profil student
+router.get("/studentInfos", (req, res) => {
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
 
-//   const body = req.body;
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
 
-//   /* Creating an object called jobOffer. */
-//       var jobOffer = {
-//         company: body.company,
-//         email: body.email,
-//         jobTitle: body.jobTitle,
-//         jobType: body.jobType,
-//         contractType: body.contractType,
-//         contractLength: body.contractLength,
-//         salary: body.salary,
-//         tempSalary: body.tempSalary,
-//         favorite: body.favorite,
-//         department: body.department,
-//         description: body.description,
-//         city: body.city
-//       }
-
-//   services.addJobOffer(jobOffer)
-//     .then(result => {
-//       console.log("Ajoutée à la bdd avec succès")
-//       res.status(result.status).json({ message: `L'annonce a été ajoutée avec succès avec l'ID ${result.data}` });
-//     })
-//     .catch(error => {
-//       console.error(error);
-//       res.status(500).json({ error: error });
-//     });
-// });
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.getStudentById(decoded.id).then(data => {
+      res.status(data.status).send(data.data);   
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
 
 export default router;
