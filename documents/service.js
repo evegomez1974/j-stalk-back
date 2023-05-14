@@ -49,9 +49,8 @@ const services = {
     //tableaudeReturn
     return new Promise((resolve,reject) => {
   
-        const sqlInsertDocs =
-        "UPDATE documents SET (`name`, `docPDF`) VALUES (?,?) WHERE documentID= ? AND userID = " + UserId
-        connection.query(sqlInsertDocs, [docDetails.name,docDetails.docPDF,docDetails.documentID,userId], (error2, results) => {
+      const sqlInsertDocs = `UPDATE documents SET name=?, docPDF=? WHERE documentID=? AND userID=${UserId}`;
+      connection.query(sqlInsertDocs, [docDetails.name,docDetails.docPDF,docDetails.documentID,UserId], (error2, results) => {
           if (error2) {
             reject(error2)
             console.error(error2);

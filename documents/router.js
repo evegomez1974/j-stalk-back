@@ -43,7 +43,7 @@ router.post("/userDocs", upload.fields([]), (req,res) => {
 // modifier profil user
 router.put("/userDocsModif", upload.fields([]), (req, res) => {
     res.set("Content-type", "application/json");
-    console.log('param:',req.params.documentID, req.params.name, req.params.docPDF)
+    console.log('param:',req.body.documentID, req.body.name, req.body.docPDF)
     let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
     if (status != 200) {
       res.status(status).send(message);
@@ -102,9 +102,9 @@ router.get("/userDocs", (req, res) => {
   
 
 
-  // Auth : Oui
-// Louer une place
-router.get("/userPDF/:documentID"),(req, res) => {
+//   // Auth : Oui
+// // Louer une place
+router.get("/userPDF/:documentID",(req, res) => {
     res.set("Content-Type", "application/json");
     let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
   
@@ -130,7 +130,6 @@ router.get("/userPDF/:documentID"),(req, res) => {
       res.status(401).end("Vous n'êtes pas authentifié");
       return;
     }
-}
-
+})
 
 export default router;
