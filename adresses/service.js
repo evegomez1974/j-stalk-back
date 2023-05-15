@@ -28,7 +28,7 @@ const services = {
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetDepartments = "SELECT name FROM departments;";
+      const sqlGetDepartments = "SELECT id, name FROM departments;";
       connection.query(
         sqlGetDepartments,
         (errorQueryGetListDepartments, resultQueryGetListDepartments) => {
@@ -37,8 +37,6 @@ const services = {
             reject(errorQueryGetListDepartments);
             return;
           }
-          console.log(resultQueryGetListDepartments);
-          //arrayReturn.push(resultQueryGetUser);
           arrayReturn = resultQueryGetListDepartments
           resolve({ status: 200, data: arrayReturn});
         });

@@ -34,32 +34,30 @@ router.get("/users/login", (req, res) => {
     })
 });
 
-// Auth : Non
-// s'enregistrer
-router.post('/users/signup', upload.fields([]), (req, res) => {
-  services.signup(req.body)
-    .then(token => {
-      res.status(200).send({ token });
-    })
-    .catch(err => {
-      res.status(400).send({ err });
-    })
-})
+// // Auth : Non
+// // s'enregistrer
+// router.post('/users/signup', upload.fields([]), (req, res) => {
+//   services.signup(req.body)
+//     .then(token => {
+//       res.status(200).send({ token });
+//     })
+//     .catch(err => {
+//       res.status(400).send({ err });
+//     })
+// })
 
 
 
-router.put("/addUsers", (req, res) => {
+router.put("/users/signup", (req, res) => {
   res.set("Content-type", "application/json");
 
   const body = req.body;
-  console.log("form", formUser)
-
   /* Creating an object called jobOffer. */
-      var formUser = {
+      var formSignUp = {
         email: body.email,
         password: body.password,
         name: body.name,
-        firstname: body.firstname,
+        firstName: body.firstName,
         phoneNumber: body.phoneNumber,
         pictures: body.pictures,
         userStatus: body.userStatus,
@@ -70,10 +68,14 @@ router.put("/addUsers", (req, res) => {
         typeDegree: body.typeDegree,
         nameSchool: body.nameSchool,
         description: body.description,
+        favorite: body.favorite,
+        address: body.address,
+        city: body.city,
+        department: body.department
       }
 
 
-  services.test(formUser)
+  services.addUserSignUp(formSignUp)
     .then(result => {
       console.log("Ajoutée à la bdd avec succès")
       res.status(result.status).json({ message: `L'étudiant a été ajoutée avec succès avec l'ID ${result.data}` });
