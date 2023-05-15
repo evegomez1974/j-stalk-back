@@ -1,8 +1,10 @@
 import express from "express";
 import services from "./services.js";
 import multer from "multer";
+import bodyParser from "body-parser";
 
 const router = express.Router();
+router.use(bodyParser.json());
 
 let upload = multer();
 
@@ -43,6 +45,44 @@ router.post('/users/signup', upload.fields([]), (req, res) => {
       res.status(400).send({ err });
     })
 })
+
+
+
+router.put("/addUsers", (req, res) => {
+  res.set("Content-type", "application/json");
+
+  const body = req.body;
+  console.log("form", formUser)
+
+  /* Creating an object called jobOffer. */
+      var formUser = {
+        email: body.email,
+        password: body.password,
+        name: body.name,
+        firstname: body.firstname,
+        phoneNumber: body.phoneNumber,
+        pictures: body.pictures,
+        userStatus: body.userStatus,
+        jobType: body.jobType,
+        contractType: body.contractType,
+        contractLength: body.contractLength,
+        yearSchool: body.yearSchool,
+        typeDegree: body.typeDegree,
+        nameSchool: body.nameSchool,
+        description: body.description,
+      }
+
+
+  services.test(formUser)
+    .then(result => {
+      console.log("Ajoutée à la bdd avec succès")
+      res.status(result.status).json({ message: `L'étudiant a été ajoutée avec succès avec l'ID ${result.data}` });
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ error: error });
+    });
+});
 
 
 

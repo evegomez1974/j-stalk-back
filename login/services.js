@@ -59,51 +59,90 @@ const connection = mysql.createConnection({
         );
       });
     },
-    /**
-   *
-   * @param {Object} credentials
-   * @returns {Promise} status
-   */
-  signup: function (credentials) {
-    console.log(credentials);
-    return new Promise((resolve, reject) => {
+  //   /**
+  //  *
+  //  * @param {Object} credentials
+  //  * @returns {Promise} status
+  //  */
+  // signup: function (credentials) {
+  //   console.log(credentials);
+  //   return new Promise((resolve, reject) => {
 
-          // Vérifier si l'adresse email existe déjà dans la base de données
-      connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const email_count = rows[0].email_count;
+  //         // Vérifier si l'adresse email existe déjà dans la base de données
+  //     connection.query("SELECT COUNT(*) AS email_count FROM `users` WHERE `email` = ?", [credentials.email, credentials.password], (err, rows) => {
+  //       if (err) {
+  //         reject(err);
+  //         return;
+  //       }
+  //       const email_count = rows[0].email_count;
 
 
-        // Si l'adresse email ou le pseudo existe déjà, renvoyer une erreur
-        if (email_count > 0) {
-          reject(new Error("Email déjà enregistré"));
-          return;
-        }
-        this.hashPassword(credentials.password)
-        .then(pwd => {
-          const userCredentials = [credentials.name, credentials.firstname, credentials.email, credentials.phoneNumber, credentials.pictures, pwd];
+  //       // Si l'adresse email ou le pseudo existe déjà, renvoyer une erreur
+  //       if (email_count > 0) {
+  //         reject(new Error("Email déjà enregistré"));
+  //         return;
+  //       }
+  //       this.hashPassword(credentials.password)
+  //       .then(pwd => {
+  //         const userCredentials = [credentials.name, credentials.firstname, credentials.email, credentials.phoneNumber, credentials.pictures, pwd];
   
-          connection.query("INSERT INTO `users`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
-            if(err) {
-              reject(err);
-              return;
-            }
-            connection.query("SELECT MAX(userID) as id FROM users", (err, result) => {
-              if(err) {
-                reject(err);
-                return;
-              }
-              resolve(this.createJWT(result[0].id));
-            })
-          });
-        })
+  //         connection.query("INSERT INTO `users`(`Nom`, `Prenom`, `Email`, `Telephone`, `Image`, `MotDePasse`) VALUES (?,?,?,?,?,?)", userCredentials, (err) => {
+  //           if(err) {
+  //             reject(err);
+  //             return;
+  //           }
+  //           connection.query("SELECT MAX(userID) as id FROM users", (err, result) => {
+  //             if(err) {
+  //               reject(err);
+  //               return;
+  //             }
+  //             resolve(this.createJWT(result[0].id));
+  //           })
+  //         });
+  //       })
+  //     });
+  //   });
+  // },
+
+  // addJobOffer: function(jobOffer) {
+  //   return new Promise((resolve, reject) => {
+  //       const sqlAddJobOffer = "INSERT INTO jobOffers(jobTitle, city, department, jobType, contractType, contractLength, salary, tempSalary, description, favorite, company, email ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+  //       connection.query(sqlAddJobOffer, [jobOffer.jobTitle, jobOffer.city, jobOffer.department, jobOffer.jobType, jobOffer.contractType, jobOffer.contractLength, jobOffer.salary, jobOffer.tempSalary, jobOffer.description, jobOffer.favorite, jobOffer.company, jobOffer.email], (error, results) => {
+  //           if (error) {
+  //               console.error(error);
+  //               reject(error);
+  //           } else {
+  //               resolve({ status: 200, data: results.city });
+  //           }
+  //       });
+  //   });
+
+  test: function(formUser) {
+    return new Promise((resolve, reject) => {
+      const sqlAddUser = "INSERT INTO users (password, email, name, firstName, phoneNumber, pictures, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      const sqlAddStudent = "INSERT INTO students (userID, jobType, contractType, contractLength, yearSchool, nameSchool, description, favorite) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?, ?, NULL)";
+  
+      connection.query(sqlAddUser, [formUser.password, formUser.email, formUser.name, formUser.firstName, formUser.pictures, formUser.phoneNumber, formUser.userStatus], (error, userResults) => {
+        if (error) {
+          console.error(error);
+          reject(error);
+          return;
+        }
+  
+        const userID = userResults.insertId;
+  
+        connection.query(sqlAddStudent, [userID, formUser.jobType, formUser.contractType, formUser.contractLength, formUser.yearSchool, formUser.nameSchool, formUser.description, formUser.favorite ], (error, studentResults) => {
+          if (error) {
+            console.error(error);
+            reject(error);
+          } else {
+            resolve({ status: 200, data: studentResults });
+          }
+        });
       });
     });
   },
-
+  
 
 
 
