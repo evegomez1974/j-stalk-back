@@ -44,13 +44,41 @@ const services = {
   },
 
 
-  putDocsUserById: function ( docDetails, UserId) {
+
+  deletePDFById: function (documentId) {
+    // return un garage avec ses photos et ses mobilites, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+      // get info from garages selected
+      const sqlDeletePDF = "DELETE FROM documents WHERE documentID = ?";
+      connection.query(
+        sqlDeletePDF,
+        documentId,
+        (errorQueryGetPDF, resultQueryGetPDF) => {
+          if (errorQueryGetPDF) {
+            console.error(errorQueryGetPDF);
+            reject(errorQueryGetPDF);
+            return;
+          }
+          resolve({ status: 200});
+
+        }
+      );
+    });
+  },
+
+  putDocsUserById: function ( docDetails) {
     // modifier les infos de l'user connecté, en donnant l'id en param
     //tableaudeReturn
+    // console.log("iddoc" + docDetails.documentID)
+    // console.log("NAME" + docDetails.name)
+    // console.log("doc" + docDetails.docPDF)
+
     return new Promise((resolve,reject) => {
-  
-      const sqlInsertDocs = `UPDATE documents SET name=?, docPDF=? WHERE documentID=? AND userID=${UserId}`;
-      connection.query(sqlInsertDocs, [docDetails.name,docDetails.docPDF,docDetails.documentID,UserId], (error2, results) => {
+
+      const sqlInsertDocs = `UPDATE documents SET name=?, docPDF=? WHERE documentID=?`;
+      connection.query(sqlInsertDocs, 
+        [docDetails.name,docDetails.docPDF,docDetails.documentID], (error2, results) => {
           if (error2) {
             reject(error2)
             console.error(error2);
@@ -119,25 +147,30 @@ const services = {
 
 
 
-  getPDFById: function (documentId) {
+  getPDFById: function (documentID) {
     // return un garage avec ses photos et ses mobilites, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
+      console.log(documentID)
       // get info from garages selected
-      const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = ?";
+      const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = " + documentID;
       connection.query(
         sqlGetPDF,
-        documentId,
+        documentID,
         (errorQueryGetPDF, resultQueryGetPDF) => {
+          console.log("la 1 "+resultQueryGetPDF)
           if (errorQueryGetPDF) {
             console.error(errorQueryGetPDF);
             reject(errorQueryGetPDF);
             return;
           }
-          resolve({ status: 200, data: resultQueryGetPDF});
 
+          console.log("la "+resultQueryGetPDF)
+          resolve({ status: 200, data: resultQueryGetPDF});
         }
+
       );
+
     });
   },
 
