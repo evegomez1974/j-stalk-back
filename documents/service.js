@@ -117,7 +117,48 @@ const services = {
 
     // });
   },
- 
+
+
+
+  getUserLastDocs: function (UserId) {
+    // return les infos de l'user connecté, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+
+      // get info from user selected
+      const sqlGetLastUser = "SELECT MAX(documentID) as id FROM documents WHERE userID = ? ";
+      connection.query(
+        sqlGetLastUser,
+        [UserId],
+        (errorQueryGetUser, result1) => {
+          if (errorQueryGetUser) {
+            console.error(errorQueryGetUser);
+            reject(errorQueryGetUser);
+            return;
+          }
+          result1 = result1[0].id
+          console.log(result1);
+          // resolve({data: result1});
+          const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = " + result1;
+          connection.query(
+            sqlGetPDF,
+            result1,
+            (errorQueryGetPDF, resultQueryGetPDF) => {
+              console.log("la 1 "+resultQueryGetPDF)
+              if (errorQueryGetPDF) {
+                console.error(errorQueryGetPDF);
+                reject(errorQueryGetPDF);
+                return;
+              }
+    
+              console.log("la " + resultQueryGetPDF)
+              resolve({ status: 200, data: resultQueryGetPDF});
+            
+        });
+      })
+  
+    });
+  },
 
   getUserByIdDocs: function (UserId) {
     // return les infos de l'user connecté, en donnant l'id en param
@@ -125,7 +166,7 @@ const services = {
     return new Promise((resolve, reject) => {
       let arrayReturn = "";
       // get info from user selected
-      const sqlGetUser = "SELECT * FROM documents WHERE userID = ?";
+      const sqlGetUser = "SELECT * FROM documents WHERE userID = ? ";
       connection.query(
         sqlGetUser,
         [UserId],
@@ -151,7 +192,7 @@ const services = {
     // return un garage avec ses photos et ses mobilites, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
-      let arrayReturn = ""
+
       console.log(documentID)
       // get info from garages selected
       const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = " + documentID;

@@ -130,6 +130,36 @@ router.get("/userDocs", (req, res) => {
   })
   
 
+  // Auth : oui
+// voir profil user
+router.get("/userLastDocs", (req, res) => {
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
+    services.getUserLastDocs(decoded.id).then(data => {
+      console.log("ici " + data.data);
+      res.status(data.status).send(data.data); 
+    })
+  } else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
+})
+
 
 //   // Auth : Oui
 // // Louer une place
@@ -154,7 +184,7 @@ router.get("/userPDF/:documentID",(req, res) => {
         console.log("id doc : " + req.params.documentID)
       services.getPDFById(req.params.documentID).then(data => {
         console.log("ici id data : " + data.data + "ici id status : " + data.status);
-        res.status(data.status).send({data: data.data}); 
+        res.status(data.status).send(data.data); 
       })
     } else {
       res.status(401).end("Vous n'êtes pas authentifié");
