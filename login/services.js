@@ -143,7 +143,7 @@ const services = {
     addUserSignUp: function (formSignUp) {
         return new Promise((resolve, reject) => {
             const sqlAddUser = "INSERT INTO users (password, email, name, firstName, phoneNumber, pictures, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            const sqlAddStudent = "INSERT INTO students (userID, jobType, contractType, contractLength, yearSchool, nameSchool, description, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            const sqlAddStudent = "INSERT INTO students (userID, jobType, contractType, contractLength, yearSchool, typeDegree, nameSchool, description, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             const sqlAddAddress = "INSERT INTO addresses (address, city, departmentID) VALUES (?, ?, ?)";
             const sqlAddCompany = "INSERT INTO companies (addressID, userID, description, favorite) VALUES (?, ?, ?, ?)";
 
@@ -176,7 +176,7 @@ const services = {
                             const userID = userResults.insertId;
 
                             if (formSignUp.userStatus === "student") {
-                                connection.query(sqlAddStudent, [userID, formSignUp.jobType, formSignUp.contractType, formSignUp.contractLength, formSignUp.yearSchool, formSignUp.nameSchool, formSignUp.description, formSignUp.favorite], (error, studentResults) => {
+                                connection.query(sqlAddStudent, [userID, formSignUp.jobType, formSignUp.contractType, formSignUp.contractLength, formSignUp.yearSchool, formSignUp.typeDegree, formSignUp.nameSchool, formSignUp.description, formSignUp.favorite], (error, studentResults) => {
                                     if (error) {
                                         console.error(error);
                                         reject(error);
