@@ -151,6 +151,7 @@ const services = {
     // return un garage avec ses photos et ses mobilites, en donnant l'id en param
     //tableaudeReturn
     return new Promise((resolve, reject) => {
+      let arrayReturn = ""
       console.log(documentID)
       // get info from garages selected
       const sqlGetPDF = "SELECT docPDF FROM documents WHERE documentID = " + documentID;
@@ -165,11 +166,12 @@ const services = {
             return;
           }
 
-          console.log("la "+resultQueryGetPDF)
+          console.log("la " + resultQueryGetPDF)
           resolve({ status: 200, data: resultQueryGetPDF});
         }
 
       );
+
 
     });
   },

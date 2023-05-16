@@ -120,7 +120,7 @@ router.get("/userDocs", (req, res) => {
     }
     if (decoded) {
       services.getUserByIdDocs(decoded.id).then(data => {
-        console.log("ici" + data);
+        console.log("ici " + data);
         res.status(data.status).send(data.data);   
       })
     } else {
@@ -153,8 +153,8 @@ router.get("/userPDF/:documentID",(req, res) => {
     if (decoded) {
         console.log("id doc : " + req.params.documentID)
       services.getPDFById(req.params.documentID).then(data => {
-        console.log("ici " + {data: data.data});
-        res.status(data.status).send(data.data);   
+        console.log("ici id data : " + data.data + "ici id status : " + data.status);
+        res.status(data.status).send({data: data.data}); 
       })
     } else {
       res.status(401).end("Vous n'êtes pas authentifié");
