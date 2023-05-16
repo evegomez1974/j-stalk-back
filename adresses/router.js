@@ -35,4 +35,23 @@ router.get("/listDepartments", (req, res) => {
  
 });
 
+router.get("/listDepartmentsSignUp", (req, res) => {
+  res.set("Content-type", "application/json");
+
+  // Récupération de toutes les entreprises
+  services.getlistDepartmentsSignUp()
+    .then(departments => {
+      // Envoi de la réponse JSON avec les cities et le statut 200 OK
+      // console.log(jobOffers)
+      res.status(200).json({ departments });
+    })
+    .catch(error => {
+      console.error(error);
+      // Envoi de la réponse avec le statut 500 Internal Server Error
+      res.sendStatus(500);
+    });
+
+ 
+});
+
 export default router;

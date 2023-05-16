@@ -44,6 +44,29 @@ const services = {
     });
   },
 
+  getlistDepartmentsSignUp: function () {
+      // return les infos de l'user connecté, en donnant l'id en param
+    //tableaudeReturn
+    return new Promise((resolve, reject) => {
+      let arrayReturn = "";
+      // get info from user selected
+      const sqlGetDepartments = "SELECT id, name FROM departments;";
+      connection.query(
+        sqlGetDepartments,
+        (errorQueryGetListDepartments, resultQueryGetListDepartments) => {
+          if (errorQueryGetListDepartments) {
+            console.error(errorQueryGetListDepartments);
+            reject(errorQueryGetListDepartments);
+            return;
+          }
+          arrayReturn = resultQueryGetListDepartments
+          resolve({ status: 200, data: arrayReturn});
+        });
+
+    });
+
+  },
+
   decodeCredentials: function (base64string) {
     console.log(base64string);
     let buffer = Buffer(base64string, "base64");
