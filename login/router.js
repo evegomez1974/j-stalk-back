@@ -49,7 +49,23 @@ router.get("/users/login", (req, res) => {
 
 
 router.put("/users/signup", (req, res) => {
-  res.set("Content-type", "application/json");
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
 
   const body = req.body;
   /* Creating an object called jobOffer. */
@@ -84,6 +100,10 @@ router.put("/users/signup", (req, res) => {
       console.error(error);
       res.status(500).json({ error: error });
     });
+  }else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
 });
 
 

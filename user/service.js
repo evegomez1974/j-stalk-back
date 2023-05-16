@@ -101,6 +101,33 @@ const services = {
             });
         },
 
+
+        getUserByIdType: function (UserId) {
+          // return les infos de l'user connecté, en donnant l'id en param
+          //tableaudeReturn
+          return new Promise((resolve, reject) => {
+            let arrayReturn = "";
+            // get info from user selected
+            const sqlGetUser = "SELECT status FROM users  WHERE userID = ?";
+            connection.query(
+              sqlGetUser,
+              [UserId],
+              (errorQueryGetUser, resultQueryGetUser) => {
+                if (errorQueryGetUser) {
+                  console.error(errorQueryGetUser);
+                  reject(errorQueryGetUser);
+                  return;
+                }
+                //console.log(resultQueryGetUser);
+                //arrayReturn.push(resultQueryGetUser);
+                arrayReturn = resultQueryGetUser
+                console.log(arrayReturn);
+                resolve({ status: 200, data: arrayReturn});
+              });
+      
+          });
+      },
+
         getUserById: function (UserId) {
             // return les infos de l'user connecté, en donnant l'id en param
             //tableaudeReturn

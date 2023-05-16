@@ -7,7 +7,23 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.get("/listCompanies", (req, res) => {
-  res.set("Content-type", "application/json");
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
 
   // Récupération de toutes les entreprises
   services.getListCompanies()
@@ -21,6 +37,10 @@ router.get("/listCompanies", (req, res) => {
       // Envoi de la réponse avec le statut 500 Internal Server Error
       res.sendStatus(500);
     });
+  }else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
 });
 
 export default router;

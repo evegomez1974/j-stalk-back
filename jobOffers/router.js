@@ -9,7 +9,23 @@ router.use(bodyParser.json());
 //const port = 8080;
 
 router.get("/listJobOffers", (req, res) => {
-  res.set("Content-type", "application/json");
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
 
   // Récupération de toutes les entreprises
   services.getJobOffers()
@@ -23,10 +39,30 @@ router.get("/listJobOffers", (req, res) => {
       // Envoi de la réponse avec le statut 500 Internal Server Error
       res.sendStatus(500);
     });
+  }else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
 });
 
 router.put("/addJobOffers", (req, res) => {
-  res.set("Content-type", "application/json");
+  res.set("Content-Type", "application/json");
+  let [status, message] = services.checkAuthZHeader(req.headers.authorization, "Bearer");
+
+  if (status != 200) {
+    res.status(status).send(message);
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  let decoded;
+  try {
+    decoded = services.decodeJwt(token);
+    console.log(decoded);
+  } catch (e) {
+    console.log(e);
+  }
+  if (decoded) {
 
   const body = req.body;
 
@@ -55,6 +91,10 @@ router.put("/addJobOffers", (req, res) => {
       console.error(error);
       res.status(500).json({ error: error });
     });
+  }else {
+    res.status(401).end("Vous n'êtes pas authentifié");
+    return;
+  }
 });
 
 export default router;
