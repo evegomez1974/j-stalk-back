@@ -49,6 +49,7 @@ const services = {
 
   addJobOffer: function(jobOffer) {
     return new Promise((resolve, reject) => {
+      console.log("jobOffer",jobOffer)
         const sqlAddJobOffer = "INSERT INTO jobOffers(jobTitle, city, department, jobType, contractType, contractLength, salary, tempSalary, description, favorite, company, email ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sqlAddJobOffer, [jobOffer.jobTitle, jobOffer.city, jobOffer.department, jobOffer.jobType, jobOffer.contractType, jobOffer.contractLength, jobOffer.salary, jobOffer.tempSalary, jobOffer.description, jobOffer.favorite, jobOffer.company, jobOffer.email], (error, results) => {
             if (error) {

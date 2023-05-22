@@ -83,9 +83,14 @@ router.put("/addJobOffers", (req, res) => {
       }
 
   services.addJobOffer(jobOffer)
-  .then(data => {
-    res.status(data.status).send(data.data); 
+  .then(result => {
+    console.log("Ajoutée à la bdd avec succès")
+    res.status(result.status).json({ message: `L'annonce a été ajoutée avec succès avec l'ID ${result.data}` });
   })
+  .catch(error => {
+    console.error(error);
+    res.status(500).json({ error: error });
+  });
 } else {
   res.status(401).end("Vous n'êtes pas authentifié");
   return;

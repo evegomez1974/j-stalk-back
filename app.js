@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import login from "./login/router.js"
-import jobOffersRoutes from "./jobOffers/router.js";
+import jobOffers from "./jobOffers/router.js";
 import students from "./students/router.js"
 import documents from "./documents/router.js"
 import images from "./images/router.js"
@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 
 app.use(login)
-app.use(jobOffersRoutes)
+app.use(jobOffers)
 app.use(students)
 app.use(adresses)
 app.use(companies)
