@@ -1,9 +1,9 @@
 # Utilisez une image de base avec Node.js
-FROM node:lts-alpine
+FROM node:latest
 # Créez le répertoire de travail
 WORKDIR /app
 
-RUN apk update && apk add bash
+RUN apt update
 
 # Copiez les fichiers nécessaires dans le conteneur
 COPY package*.json ./
@@ -13,7 +13,7 @@ COPY . .
 RUN npm install
 
 # Exposez le port sur lequel votre application Vue.js sera en cours d'exécution
-EXPOSE 3000
+EXPOSE 8080
 
 # Commande pour démarrer l'application
 CMD ["npm", "run", "start"]

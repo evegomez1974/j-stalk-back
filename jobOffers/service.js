@@ -8,7 +8,7 @@ dotenv.config();
 //console.log("secret is", process.env.ACCESS_TOKEN_SECRET);
 
 const connection = mysql.createConnection({
-  host: "127.0.0.1",
+  host: "j-stalk-bdd",
   user: "root",
   password: "",
   database: "j-stalk-api",
